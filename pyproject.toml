@@ -38,3 +38,6 @@ Source = "https://github.com/PaulCascarino/mytraderbotScraper"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.scripts]
+scrape-boursorama = "mytraderbotScraper.cli:run"

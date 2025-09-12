@@ -16,3 +16,15 @@ DOWNLOAD_DELAY = 1.5
 ITEM_PIPELINES = {
     "mytraderbotScraper.pipelines.JsonWriterPipeline": 300,
 }
+
+
+# settings.py
+FEED_EXPORT_ENCODING = "utf-8"
+
+FEEDS = {
+    "titres.json": {
+        "format": "json",
+        "overwrite": True,
+        "encoding": "utf8"
+    }
+}
