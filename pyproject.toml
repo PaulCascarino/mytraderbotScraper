@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mytraderbotScraper"
+version = "0.1.0"
+description = "Utilities to scrape French finance news and generate reports."
+authors = [
+    { name = "Paul Cascarino", email = "paul.cascarino@laposte.net" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+
+dependencies = [
+    "scrapy>=2.11",
+    "pymupdf>=1.24",
+    "jinja2>=3.1",
+    "requests>=2.32",
+    "lxml>=4.9"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "build",
+    "twine",
+    "black",
+    "flake8"
+]
+
+[project.urls]
+Homepage = "https://github.com/PaulCascarino/mytraderbotScraper"
+Documentation = "https://github.com/PaulCascarino/mytraderbotScraper#readme"
+Issues = "https://github.com/PaulCascarino/mytraderbotScraper/issues"
+Source = "https://github.com/PaulCascarino/mytraderbotScraper"
+
+[tool.setuptools.packages.find]
+where = ["src"]

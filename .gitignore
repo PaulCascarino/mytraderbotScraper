@@ -1,0 +1,49 @@
+# --- Environnements virtuels ---
+.env/
+.venv/
+venv/
+ENV/
+env/
+
+# --- Fichiers Python compilés ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# --- Fichiers de logs / debug ---
+*.log
+*.pot
+*.pyc
+
+# --- Sorties Scrapy ---
+*.json
+*.jsonl
+*.jl
+*.csv
+*.xml
+
+# --- Configs système ---
+.DS_Store
+Thumbs.db
+
+# --- PyCharm / VSCode / IDE ---
+.vscode/
+.idea/
+
+# --- Tests / coverage ---
+.coverage
+*.cover
+coverage.xml
+htmlcov/
+.tox/
+.mypy_cache/
+.pytest_cache/
+.pyre/
+
+# --- Build / Distribution ---
+build/
+dist/
+*.egg-info/
+.eggs/
