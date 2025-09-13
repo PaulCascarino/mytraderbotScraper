@@ -69,6 +69,24 @@ Example output:
 1  20:12  Amazon teste des fourgons électriques BrightDrop  Reuters
 ```
 
+### Note on Windows and Twisted:  
+
+Scrapy relies on the Twisted framework, which requires a single *reactor* per process.  
+On Windows, the default `SelectReactor` may conflict with the `AsyncioSelectorReactor`,  
+leading to errors like:
+
+```bash
+RuntimeError: The installed reactor (...) does not match the requested one (...)
+```
+
+```python
+# src/mytraderbotScraper/settings.py
+TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
+```
+
+To prevent this, the project explicitly sets the reactor in `settings.py`:
+
+
 ## Development
 
 The project follows a `src/`-based layout:

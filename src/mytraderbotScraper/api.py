@@ -1,5 +1,6 @@
 # src/mytraderbotScraper/api.py
 import pandas as pd
+
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider

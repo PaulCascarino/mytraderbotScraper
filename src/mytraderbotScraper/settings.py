@@ -28,3 +28,5 @@ FEEDS = {
         "encoding": "utf8"
     }
 }
+
+TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
