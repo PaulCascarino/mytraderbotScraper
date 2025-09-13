@@ -5,9 +5,9 @@ from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider
 from mytraderbotScraper.pipelines import CollectorPipeline
-from twisted.internet import asyncioreactor
+from twisted.internet import asyncioreactor, defer
 
-# ensure AsyncioSelectorReactor is installed (safe to call multiple times)
+# install asyncio reactor (safe even if already installed)
 try:
     asyncioreactor.install()
 except Exception:
@@ -19,6 +19,7 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
     Scrape articles from Boursorama and return a pandas DataFrame.
     Works both in .py scripts and Jupyter notebooks.
     """
+    # reset storage
     CollectorPipeline.collected_items = []
 
     settings = get_project_settings()
@@ -30,26 +31,24 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
     BoursoramaNewsSpider.total_pages = pages
 
     try:
-        # 🔹 Case 1: no loop running (normal .py script)
-        loop = asyncio.get_running_loop()
+        asyncio.get_running_loop()
         in_notebook = True
     except RuntimeError:
-        # 🔹 Case 2: no running loop (script mode)
         in_notebook = False
 
     if in_notebook:
-        # Run inside existing asyncio loop (Jupyter)
+        # Inside Jupyter / already running loop
         runner = CrawlerRunner(settings)
-        task = runner.crawl(BoursoramaNewsSpider)
 
-        # Use nest_asyncio to allow nested event loops
+        async def crawl():
+            await defer.ensureDeferred(runner.crawl(BoursoramaNewsSpider))
+
         import nest_asyncio
-
         nest_asyncio.apply()
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(task)
+        loop.run_until_complete(crawl())
     else:
-        # Normal Python script: safe to use CrawlerProcess
+        # Normal .py script
         process = CrawlerProcess(settings)
         process.crawl(BoursoramaNewsSpider)
         process.start()
