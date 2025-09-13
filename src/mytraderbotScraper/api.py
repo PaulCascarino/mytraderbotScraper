@@ -1,10 +1,9 @@
 # src/mytraderbotScraper/api.py
 import pandas as pd
-
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider
-from twisted.internet import reactor, defer
+from mytraderbotScraper.pipelines import CollectorPipeline
 
 
 def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
@@ -22,15 +21,11 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
         A DataFrame with columns: ["heure", "titre", "lien", "source", "article"].
     """
 
-    items = []
-
-    class CollectorPipeline:
-        def process_item(self, item, spider):
-            items.append(item)
-            return item
+    # reset collected items for each run
+    CollectorPipeline.collected_items = []
 
     settings = get_project_settings()
-    settings.set("ITEM_PIPELINES", {"__main__.CollectorPipeline": 100})
+    settings.set("ITEM_PIPELINES", {"mytraderbotScraper.pipelines.CollectorPipeline": 100})
 
     process = CrawlerProcess(settings)
 
@@ -38,4 +33,4 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
     process.crawl(BoursoramaNewsSpider)
     process.start()
 
-    return pd.DataFrame(items)
+    return pd.DataFrame(CollectorPipeline.collected_items)

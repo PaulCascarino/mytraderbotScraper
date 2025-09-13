@@ -11,3 +11,12 @@ class JsonWriterPipeline:
         line = json.dumps(dict(item), ensure_ascii=False) + "\n"
         self.file.write(line)
         return item
+
+class CollectorPipeline:
+    collected_items = []
+
+    def process_item(self, item, spider):
+        self.collected_items.append(item)
+        return item
+
+
