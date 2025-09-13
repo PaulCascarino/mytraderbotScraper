@@ -6,8 +6,8 @@ class BoursoramaNewsSpider(scrapy.Spider):
     allowed_domains = ["boursorama.com"]
 
     def start_requests(self):
-        # Ici on définit combien de pages tu veux parcourir (par ex. 5)
-        for page in range(1, 2):
+        # Ici on définit combien de pages tu veux parcourir (par ex. 9)
+        for page in range(1, 10):
             url = f"https://www.boursorama.com/bourse/actualites/page-{page}"
             yield scrapy.Request(url, callback=self.parse)
 
@@ -15,7 +15,8 @@ class BoursoramaNewsSpider(scrapy.Spider):
         # Chaque ligne d'article
         for article in response.css("li.c-list-news__line"):
             item = {
-                "heure": article.css("span.c-list-news__date::text").get(default="").strip(),
+                # On ne prend plus l'heure ici (mais on peut garder pour debug)
+                "heure_liste": article.css("span.c-list-news__date::text").get(default="").strip(),
                 "titre": article.css("p.c-list-news__title a::text").get(default="").strip(),
                 "lien": response.urljoin(article.css("p.c-list-news__title a::attr(href)").get()),
                 "source": article.css(".c-source__name::text").get(default="").strip(),
@@ -32,7 +33,12 @@ class BoursoramaNewsSpider(scrapy.Spider):
 
     def parse_article(self, response):
         item = response.meta["item"]
+
+        # Récupérer la date de publication dans l’article
+        item["date"] = response.css(".c-source__time::text").get(default="").strip()
+
         # Récupérer le texte de l'article
         contenu = response.css(".c-news-detail__content ::text").getall()
         item["article"] = " ".join([c.strip() for c in contenu if c.strip()])
+
         yield item
