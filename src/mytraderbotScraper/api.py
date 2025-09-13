@@ -5,13 +5,7 @@ from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider
 from mytraderbotScraper.pipelines import CollectorPipeline
-from twisted.internet import asyncioreactor, defer
-
-# Installer le reactor asyncio si pas déjà fait
-try:
-    asyncioreactor.install()
-except Exception:
-    pass
+from twisted.internet import defer
 
 
 def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
@@ -41,14 +35,13 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
         runner = CrawlerRunner(settings)
 
         async def crawl():
-            # enveloppe le Deferred en coroutine asyncio
-            d = runner.crawl(BoursoramaNewsSpider)
-            await defer.ensureDeferred(d)
+            await defer.ensureDeferred(runner.crawl(BoursoramaNewsSpider))
 
         import nest_asyncio
         nest_asyncio.apply()
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(crawl())
+
+        # Ici on utilise asyncio.run directement au lieu de run_until_complete
+        asyncio.run(crawl())
     else:
         # 🔹 Mode script normal
         process = CrawlerProcess(settings)
