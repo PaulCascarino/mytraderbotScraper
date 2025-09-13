@@ -5,7 +5,7 @@ from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider
 from mytraderbotScraper.pipelines import CollectorPipeline
-from twisted.internet import defer
+from twisted.internet import reactor, defer
 
 
 def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
@@ -31,7 +31,7 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
         in_notebook = False
 
     if in_notebook:
-        # 🔹 Mode Jupyter
+        # 🔹 Mode Jupyter : pas de changement de reactor
         runner = CrawlerRunner(settings)
 
         async def crawl():
@@ -39,9 +39,8 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
 
         import nest_asyncio
         nest_asyncio.apply()
-
-        # Ici on utilise asyncio.run directement au lieu de run_until_complete
-        asyncio.run(crawl())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(crawl())
     else:
         # 🔹 Mode script normal
         process = CrawlerProcess(settings)
