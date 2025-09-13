@@ -5,6 +5,9 @@ venv/
 ENV/
 env/
 
+# Data
+data/
+
 # --- Fichiers Python compilés ---
 __pycache__/
 *.py[cod]

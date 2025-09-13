@@ -14,19 +14,18 @@ DOWNLOAD_DELAY = 1.5
 
 # Pipelines activés
 ITEM_PIPELINES = {
-    "mytraderbotScraper.pipelines.JsonWriterPipeline": 300,
+    # "mytraderbotScraper.pipelines.CleanArticlePipeline": 100,
+    # "mytraderbotScraper.pipelines.JsonWriterPipeline": 300,
+    # "mytraderbotScraper.pipelines.CollectorPipeline": 100
 }
-
 
 # settings.py
 FEED_EXPORT_ENCODING = "utf-8"
 
 FEEDS = {
-    "titres.json": {
-        "format": "json",
-        "overwrite": True,
-        "encoding": "utf8"
-    }
+    # "titres.json": {
+    #     "format": "json",
+    #     "overwrite": True,
+    #     "encoding": "utf8"
+    # }
 }
-
-TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
