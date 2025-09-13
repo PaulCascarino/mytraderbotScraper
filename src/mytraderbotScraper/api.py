@@ -7,7 +7,7 @@ from mytraderbotScraper.spiders.boursorama_news import BoursoramaNewsSpider
 from mytraderbotScraper.pipelines import CollectorPipeline
 from twisted.internet import asyncioreactor, defer
 
-# install asyncio reactor (safe even if already installed)
+# Installer le reactor asyncio si pas déjà fait
 try:
     asyncioreactor.install()
 except Exception:
@@ -19,7 +19,7 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
     Scrape articles from Boursorama and return a pandas DataFrame.
     Works both in .py scripts and Jupyter notebooks.
     """
-    # reset storage
+    # reset
     CollectorPipeline.collected_items = []
 
     settings = get_project_settings()
@@ -37,18 +37,20 @@ def fetch_boursorama_articles(pages: int = 1) -> pd.DataFrame:
         in_notebook = False
 
     if in_notebook:
-        # Inside Jupyter / already running loop
+        # 🔹 Mode Jupyter
         runner = CrawlerRunner(settings)
 
         async def crawl():
-            await defer.ensureDeferred(runner.crawl(BoursoramaNewsSpider))
+            # enveloppe le Deferred en coroutine asyncio
+            d = runner.crawl(BoursoramaNewsSpider)
+            await defer.ensureDeferred(d)
 
         import nest_asyncio
         nest_asyncio.apply()
         loop = asyncio.get_event_loop()
         loop.run_until_complete(crawl())
     else:
-        # Normal .py script
+        # 🔹 Mode script normal
         process = CrawlerProcess(settings)
         process.crawl(BoursoramaNewsSpider)
         process.start()
