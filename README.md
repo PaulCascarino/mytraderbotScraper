@@ -69,23 +69,17 @@ Example output:
 1  20:12  Amazon teste des fourgons électriques BrightDrop  Reuters
 ```
 
-### Note on Windows and Twisted:  
+### Usage in Python scripts
 
-Scrapy relies on the Twisted framework, which requires a single *reactor* per process.  
-On Windows, the default `SelectReactor` may conflict with the `AsyncioSelectorReactor`,  
-leading to errors like:
-
-```bash
-RuntimeError: The installed reactor (...) does not match the requested one (...)
-```
+The scraper is designed to be executed inside regular Python scripts, not inside Jupyter notebooks (Scrapy and Twisted do not play well with Jupyter’s event loop).  
+To use it, simply import the API function and call it from your script:
 
 ```python
-# src/mytraderbotScraper/settings.py
-TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
+from mytraderbotScraper.api import fetch_boursorama_articles
+
+df = fetch_boursorama_articles(pages=3)
+print(df.head())
 ```
-
-To prevent this, the project explicitly sets the reactor in `settings.py`:
-
 
 ## Development
 
