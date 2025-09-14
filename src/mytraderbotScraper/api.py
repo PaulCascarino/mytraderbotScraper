@@ -16,19 +16,37 @@ def clean_df(df: pl.DataFrame) -> pl.DataFrame:
 
     return (
         df.drop("heure_liste", strict=False)
+        # découper date
         .with_columns(df["date"].str.split(" à ").alias("date_split"))
         .with_columns([
             pl.col("date_split").list.get(0).alias("Date"),
-            pl.col("date_split").list.get(1).alias("heure"),
+            pl.col("date_split").list.get(1).alias("heures"),
         ])
         .drop(["date_split", "date"])
+        # nettoyer article (suppression traduction Reuters + trim)
         .with_columns(
             df["article"]
             .str.replace(delete_article, "", literal=True)
             .str.strip_chars()
             .alias("article")
         )
+        # supprimer bloc entre () seulement s'il est au tout début
+        .with_columns(
+            pl.col("article")
+            .str.replace(r"^\([^)]*\)\s*", "", literal=False)
+            .alias("article")
+        )
+        # split sur " - "
+        .with_columns(pl.col("article").str.split(" - ").alias("article_split"))
+        .with_columns(
+            pl.when(pl.col("article_split").list.len() > 1)
+              .then(pl.col("article_split").list.slice(1).list.join(" - "))
+              .otherwise(pl.col("article"))
+              .alias("article")
+        )
+        .drop("article_split")
     )
+
 
 
 def fetch_boursorama_articles(pages: int = 1, clean: bool = True) -> pl.DataFrame:
