@@ -4,10 +4,11 @@ import scrapy
 class BoursoramaNewsSpider(scrapy.Spider):
     name = "boursorama_news"
     allowed_domains = ["boursorama.com"]
+    total_pages = 1  
 
     def start_requests(self):
         # Ici on définit combien de pages tu veux parcourir (par ex. 9)
-        for page in range(1, 3):
+        for page in range(1, self.total_pages + 1):
             url = f"https://www.boursorama.com/bourse/actualites/page-{page}"
             yield scrapy.Request(url, callback=self.parse)
 

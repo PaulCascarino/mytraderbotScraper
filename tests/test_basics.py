@@ -7,7 +7,7 @@ def test_import():
     import mytraderbotScraper
     assert hasattr(mytraderbotScraper, "__version__")
 
-    df = fetch_boursorama_articles(pages=3)  # retourne un pl.DataFrame
+    df = fetch_boursorama_articles(pages=5)  # retourne un pl.DataFrame
 
     # créer dossier data si besoin
     os.makedirs("./data", exist_ok=True)
