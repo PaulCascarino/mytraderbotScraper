@@ -4,6 +4,7 @@
 venv/
 ENV/
 env/
+.vscode/
 
 # Data
 data/
